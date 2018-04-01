@@ -12,13 +12,19 @@ def window_transform_series(series, window_size):
     # containers for input/output pairs
     X = []
     y = []
+    
+    num_batches = len(series)//window_size
 
+    for i in range(num_batches):
+        end = i + window_size
+        X.append(series[i:end])
+        y.append(series[end])
+        
     # reshape each 
     X = np.asarray(X)
     X.shape = (np.shape(X)[0:2])
     y = np.asarray(y)
     y.shape = (len(y),1)
-
     return X,y
 
 # TODO: build an RNN to perform regression on our time series input/output data
