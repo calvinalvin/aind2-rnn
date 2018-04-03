@@ -47,6 +47,14 @@ def window_transform_text(text, window_size, step_size):
     # containers for input/output pairs
     inputs = []
     outputs = []
+    corpus_size = len(text)
+    
+    for i in range(corpus_size):
+        window_start = i * step_size
+        window_end = window_start + window_size
+        if window_end < corpus_size:
+            inputs.append(text[window_start:window_end])
+            outputs.append(text[window_end])              
 
     return inputs,outputs
 
