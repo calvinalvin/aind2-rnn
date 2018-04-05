@@ -1,4 +1,5 @@
 import numpy as np
+import re
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -6,21 +7,21 @@ from keras.layers import LSTM
 import keras
 
 
-# TODO: fill out the function below that transforms the input series 
+# TODO: fill out the function below that transforms the input series
 # and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_series(series, window_size):
     # containers for input/output pairs
     X = []
     y = []
-    
+
 #     num_batches = len(series)//window_size
 
     for i in range(len(series)-window_size):
         end = i + window_size
         X.append(series[i:end])
         y.append(series[end])
-        
-    # reshape each 
+
+    # reshape each
     X = np.asarray(X)
     X.shape = (np.shape(X)[0:2])
     y = np.asarray(y)
@@ -32,15 +33,16 @@ def build_part1_RNN(window_size):
     model = Sequential()
     model.add(LSTM(5, input_shape=(window_size, 1)))
     model.add(Dense(1))
-    
+
     return model
 
 ### TODO: return the text input with only ascii lowercase and the punctuation given below included.
 def cleaned_text(text):
-    punctuation = ['!', ',', '.', ':', ';', '?', ' ']
-    chars = [c if (c.isalpha() or c in punctuation) else '' for c in text]
+    #punctuation = ['!', ',', '.', ':', ';', '?', ' ']
+    #chars = [c if (c.isalpha() or c in punctuation) else '' for c in text]
 
-    return "".join(chars)
+    #return "".join(chars)
+    return re.sub("[^!,.:;? a-zA-Z]","", text)
 
 ### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_text(text, window_size, step_size):
@@ -48,21 +50,21 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
     corpus_size = len(text)
-    
+
     for i in range(corpus_size):
         window_start = i * step_size
         window_end = window_start + window_size
         if window_end < corpus_size:
             inputs.append(text[window_start:window_end])
-            outputs.append(text[window_end])              
+            outputs.append(text[window_end])
 
     return inputs,outputs
 
-# TODO build the required RNN model: 
-# a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
+# TODO build the required RNN model:
+# a single LSTM hidden layer with softmax activation, categorical_crossentropy loss
 def build_part2_RNN(window_size, num_chars):
     model = Sequential()
     model.add(LSTM(200, input_shape=(window_size, num_chars)))
     model.add(Dense(num_chars, activation='softmax'))
-    
+
     return model
